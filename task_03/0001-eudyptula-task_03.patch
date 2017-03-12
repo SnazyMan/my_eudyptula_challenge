@@ -1,0 +1,25 @@
+From fb3fd53bd9f4bd096ffe5d9af015c33e5abb9c8b Mon Sep 17 00:00:00 2001
+From: Snazyman <tue62960@temple.edu>
+Date: Sun, 12 Mar 2017 18:49:37 -0400
+Subject: [PATCH] eudyptula task_03
+
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 4a1d2cf..4636c7f 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ VERSION = 4
+ PATCHLEVEL = 11
+ SUBLEVEL = 0
+-EXTRAVERSION = -rc1-eudyputla
++EXTRAVERSION = -rc1-eudyptula
+ NAME = Fearless Coyote
+ 
+ # *DOCUMENTATION*
+-- 
+2.7.4
+
