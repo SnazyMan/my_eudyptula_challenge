@@ -1,0 +1,10 @@
+[  486.546426] input: VirtualBox USB Tablet as /devices/pci0000:00/0000:00:06.0/usb1/1-1/1-1:1.0/0003:80EE:0021.0002/input/input7
+[  486.667705] hid-generic 0003:80EE:0021.0002: input,hidraw0: USB HID v1.10 Mouse [VirtualBox USB Tablet] on usb-0000:00:06.0-1/input0
+[  491.782579] e1000: enp0s3 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: RX
+[  770.666298] hello_world: disagrees about version of symbol module_layout
+[  823.508527] hello_world: loading out-of-tree module taints kernel.
+[  823.508531] hello_world: module license 'unspecified' taints kernel.
+[  823.508532] Disabling lock debugging due to kernel taint
+[  823.508798] hello_world: module verification failed: signature and/or required key missing - tainting kernel
+[  823.512196] Hello world!
+[  855.153134] Goodbye World
