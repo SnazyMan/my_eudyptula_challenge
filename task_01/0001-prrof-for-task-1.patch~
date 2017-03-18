@@ -1,0 +1,51 @@
+From 1395cacb98c02bed92cf244cb76629ce0cf2ee24 Mon Sep 17 00:00:00 2001
+From: Snazyman <sleepingzucchini@gmail.com>
+Date: Tue, 14 Mar 2017 09:27:47 -0400
+Subject: [9850aeb5fe79] proof for task 1
+
+diff --git a/task_01/proof_01.txt b/task_01/proof_01.txt
+new file mode 100644
+index 0000000..3b2a526
+--- /dev/null
++++ b/task_01/proof_01.txt
+@@ -0,0 +1,10 @@
+
+dmesg output for proof of module building, running, and removing of hello_world module
+
++[  486.546426] input: VirtualBox USB Tablet as /devices/pci0000:00/0000:00:06.0/usb1/1-1/1-1:1.0/0003:80EE:0021.0002/input/input7
++[  486.667705] hid-generic 0003:80EE:0021.0002: input,hidraw0: USB HID v1.10 Mouse [VirtualBox USB Tablet] on usb-0000:00:06.0-1/input0
++[  491.782579] e1000: enp0s3 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: RX
++[  770.666298] hello_world: disagrees about version of symbol module_layout
++[  823.508527] hello_world: loading out-of-tree module taints kernel.
++[  823.508531] hello_world: module license 'unspecified' taints kernel.
++[  823.508532] Disabling lock debugging due to kernel taint
++[  823.508798] hello_world: module verification failed: signature and/or required key missing - tainting kernel
++[  823.512196] Hello world!
++[  855.153134] Goodbye World
+-- 
+2.7.4
+
+Below is module source
+
+#include <linux/kernel.h>
+#include <linux/module.h>
+
+int init_module(void)
+{
+  printk(KERN_DEBUG "Hello world!\n");
+  return 0;
+}
+
+void cleanup_module(void)
+{
+  printk(KERN_DEBUG "Goodbye World\n");
+}
+
+
+Below is module makefileobj-m += hello_world.o
+
+all:
+	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+
+clean:
+	make -C /lib/modules/$(shell uname -r)build M=$(PWD) clean
