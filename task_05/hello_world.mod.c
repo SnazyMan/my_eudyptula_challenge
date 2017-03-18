@@ -14,6 +14,8 @@ __attribute__((section(".gnu.linkonce.this_module"))) = {
 	.arch = MODULE_ARCH_INIT,
 };
 
+MODULE_INFO(intree, "Y");
+
 static const struct modversion_info ____versions[]
 __used
 __attribute__((section("__versions"))) = {
@@ -31,4 +33,4 @@ __attribute__((section(".modinfo"))) =
 
 MODULE_ALIAS("usb:v*p*d*dc*dsc*dp*ic03isc01ip01in*");
 
-MODULE_INFO(srcversion, "C81A2DB4642B675C9C81DAB");
+MODULE_INFO(srcversion, "150A77326FB0FA93B8C42EC");
