@@ -26,6 +26,7 @@ static ssize_t snazy_misc_device_read(struct file *file, char __user  *buff, siz
         if(copy_to_user(buff, content, count))
                 return -EFAULT;
 
+        *pos += count;
         return count;
 }
 
@@ -44,6 +45,7 @@ static ssize_t snazy_misc_device_write(struct file *file, const char __user *buf
         if(strcmp(content,id) != 0)
                 return -EINVAL;
 
+        *pos+= count;
         return count;
 }
 
