@@ -1,0 +1,58 @@
+
+/*
+ * Test file for task 06 of the eudyptula challenge
+ * This file will test the read write function of hello_world module
+ */
+
+#include <fcntl.h>
+#include <errno.h>
+#include <unistd.h>
+#include <stdio.h>
+
+#define BUF_LENGTH 13
+
+int main(char * argc, char **argv)
+{
+        int fd, status, count;
+        char content[BUF_LENGTH] = "9850aeb5fe79";
+        char rx_buf[BUF_LENGTH];
+
+        fd = open("/sys/kernel/debug/eudyptula/id", O_RDWR);
+        if(fd == 0){
+                printf("Failed open\n");
+                return -EBADF;
+        }
+
+        printf("Open Successfully, fd = %d\n", fd);
+
+        count = write(fd, content, BUF_LENGTH);
+        if(count == 0)
+                printf("Failed write\n");
+
+        printf("Write successfuly, count = %d\n", count);
+
+        count = read(fd, rx_buf, BUF_LENGTH);
+        if(count == 0)
+                printf("Failed read");
+
+        printf("Read successfully, count = %d\n", count);
+
+        int fd_jiffies;
+        unsigned long jiffies;
+
+        fd_jiffies = open("/sys/kernel/debug/eudyptula/jiffies", O_RDONLY);
+        if(fd == 0){
+                printf("Failed open jiffies\n");
+                return -EBADF;
+        }
+
+        printf("open successfully jiffies, fd_jiffies = %d\n", fd_jiffies);
+
+        count = read(fd_jiffies, &jiffies, sizeof(jiffies));
+        if(count == 0)
+                printf("failed read jiffies\n");
+
+        printf("Read successfully, jiffies = %ld\n", jiffies);
+
+        return 0;
+}
