@@ -1,1 +1,1 @@
-Linux snazyman-VirtualBox 4.11.0-rc1-eudyputla-00315-g106e4da-dirty #5 SMP Sun Mar 12 17:57:37 EDT 2017 x86_64 x86_64 x86_64 GNU/Linux
+Linux snazyman-VirtualBox 4.11.0-rc5-eudyptula+ #2 SMP Fri Apr 7 19:35:19 EDT 2017 x86_64 x86_64 x86_64 GNU/Linux
