@@ -9,19 +9,18 @@ int do_work(int *my_int, int retval)
 	int y = *my_int;
 	int z;
 	
-	for (x=0; x< *my_int; ++x) {
+	for (x=0; x< *my_int; ++x) 
 		udelay(10);
-	}
 
 	if (y < 10)
-		printk("We slept a long time!");
-
+		printk(KERN_INFO "We slept a long time!");
+	
 	z = x * y;
 
 	return z;
 }
 
-int my_init (void)
+int my_init(void)
 {
 	int x = 10;
 
@@ -30,9 +29,9 @@ int my_init (void)
 	return x;
 }
 
-void my_exit( void )
+void my_exit(void)
 {
-	return;
+	
 }
 
 module_init(my_init);
