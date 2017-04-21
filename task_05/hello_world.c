@@ -13,28 +13,30 @@
  */
 
 static int usb_snazy_probe(struct usb_interface *iface,
-                           const struct usb_device_id *id)
+			   const struct usb_device_id *id)
 {
-        printk(KERN_INFO "snazy_usb module probe");
-        return 0;
+	pr_info("snazy_usb module probe\n");
+	return 0;
 }
 
 static void usb_snazy_disconnect(struct usb_interface *intf)
 {
-        printk(KERN_INFO "snazy_usb module disconnect");
+	pr_info("snazy_usb module disconnect\n");
 }
 
-static struct usb_device_id usb_snazy_id_table [] = {
-  {USB_INTERFACE_INFO(USB_INTERFACE_CLASS_HID, USB_INTERFACE_SUBCLASS_BOOT,USB_INTERFACE_PROTOCOL_KEYBOARD)},
-        {},
+static struct usb_device_id usb_snazy_id_table[] = {
+	{USB_INTERFACE_INFO(USB_INTERFACE_CLASS_HID, /
+			    USB_INTERFACE_SUBCLASS_BOOT, /
+			    USB_INTERFACE_PROTOCOL_KEYBOARD)},
+	{},
 };
 MODULE_DEVICE_TABLE(usb, usb_snazy_id_table);
 
 static struct usb_driver usb_snazy_driver = {
-        .name = "usb_snazy",
-        .probe = usb_snazy_probe,
-        .disconnect = usb_snazy_disconnect,
-        .id_table = usb_snazy_id_table,
+	.name = "usb_snazy",
+	.probe = usb_snazy_probe,
+	.disconnect = usb_snazy_disconnect,
+	.id_table = usb_snazy_id_table,
 };
 
 module_usb_driver(usb_snazy_driver);
