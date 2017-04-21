@@ -3,11 +3,11 @@
 
 int init_module(void)
 {
-	printk(KERN_DEBUG "Hello world!\n");
+	pr_debug("Hello World!\n");
 	return 0;
 }
 
 void cleanup_module(void)
 {
-	printk(KERN_DEBUG "Goodbye World\n");
+	pr_debug("Goodbye World\n");
 }
