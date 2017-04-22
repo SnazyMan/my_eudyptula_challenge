@@ -1,0 +1,106 @@
+From sleepingzucchini@gmail.com Sat Apr 22 11:47:51 2017
+Date: Sat, 22 Apr 2017 11:47:51 -0400
+From: SnazyMan <sleepingzucchini@gmail.com>
+To: little@eudyptula-challenge.org
+Subject: [9850aeb5fe79] Task 05 of the Eudyptula Challenge
+Message-ID: <20170422154751.GA2075@snazyman-VirtualBox>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="0F1p//8PRICkK4MW"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+Status: RO
+Content-Length: 3153
+Lines: 91
+
+
+--0F1p//8PRICkK4MW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+
+--0F1p//8PRICkK4MW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="proof_05.txt"
+
+lsmod | grep hello
+
+dmesg | tail
+[   12.439419] AES CTR mode by8 optimization enabled
+[   12.584144] Adding 4021244k swap on /dev/sda5.  Priority:-1 extents:1 across:4021244k FS
+[   13.585008] random: crng init done
+[   13.610201] IPv6: ADDRCONF(NETDEV_UP): enp0s3: link is not ready
+[   13.611877] IPv6: ADDRCONF(NETDEV_UP): enp0s3: link is not ready
+[   13.617138] e1000: enp0s3 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: RX
+[   13.617519] IPv6: ADDRCONF(NETDEV_CHANGE): enp0s3: link becomes ready
+[   13.855814] snd_intel8x0 0000:00:05.0: white list rate for 1028:0177 is 48000
+[   15.189640] floppy0: no floppy controllers found
+[   15.189729] work still pending
+
+dmesg | tail
+[  161.812910] usb 1-2: new full-speed USB device number 3 using ohci-pci
+[  162.098388] usb 1-2: New USB device found, idVendor=046d, idProduct=c31c
+[  162.098392] usb 1-2: New USB device strings: Mfr=1, Product=2, SerialNumber=0
+[  162.098394] usb 1-2: Product: USB Keyboard
+[  162.098396] usb 1-2: Manufacturer: Logitech
+[  162.125478] input: Logitech USB Keyboard as /devices/pci0000:00/0000:00:06.0/usb1/1-2/1-2:1.0/0003:046D:C31C.0002/input/input7
+[  162.185683] hid-generic 0003:046D:C31C.0002: input,hidraw1: USB HID v1.10 Keyboard [Logitech USB Keyboard] on usb-0000:00:06.0-2/input0
+[  162.221784] input: Logitech USB Keyboard as /devices/pci0000:00/0000:00:06.0/usb1/1-2/1-2:1.1/0003:046D:C31C.0003/input/input8
+[  162.281820] hid-generic 0003:046D:C31C.0003: input,hidraw2: USB HID v1.10 Device [Logitech USB Keyboard] on usb-0000:00:06.0-2/input1
+[  162.316581] usbcore: registered new interface driver usb_snazy
+
+lsmod | grep hello
+hello_world            16384  0
+
+--0F1p//8PRICkK4MW
+Content-Type: text/x-csrc; charset=us-ascii
+Content-Disposition: attachment; filename="hello_world.c"
+
+#include <linux/kernel.h>
+#include <linux/module.h>
+#include <linux/usb.h>
+#include <linux/hid.h>
+
+#define LOGI_KBD_VENDOR 0x046D
+#define LOGI_KBD_PROD  0xC31C
+
+/*
+ * When USB keyboard is plugged in, the module will be automatically loaded
+ * by correct USB hotplug tools
+ * depmod/kmod/udev/mdev/systemd
+ */
+
+static int usb_snazy_probe(struct usb_interface *iface,
+			   const struct usb_device_id *id)
+{
+	pr_info("snazy_usb module probe\n");
+	return 0;
+}
+
+static void usb_snazy_disconnect(struct usb_interface *intf)
+{
+	pr_info("snazy_usb module disconnect\n");
+}
+
+static struct usb_device_id usb_snazy_id_table[] = {
+	{USB_INTERFACE_INFO(USB_INTERFACE_CLASS_HID, \
+			    USB_INTERFACE_SUBCLASS_BOOT, \
+			    USB_INTERFACE_PROTOCOL_KEYBOARD)},
+	{},
+};
+MODULE_DEVICE_TABLE(usb, usb_snazy_id_table);
+
+static struct usb_driver usb_snazy_driver = {
+	.name = "usb_snazy",
+	.probe = usb_snazy_probe,
+	.disconnect = usb_snazy_disconnect,
+	.id_table = usb_snazy_id_table,
+};
+
+module_usb_driver(usb_snazy_driver);
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Tyler Olivieri - Snazyman");
+MODULE_DESCRIPTION("Eudyptula challenge task 5");
+
+--0F1p//8PRICkK4MW--
+
