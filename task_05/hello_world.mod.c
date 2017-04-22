@@ -14,14 +14,12 @@ __attribute__((section(".gnu.linkonce.this_module"))) = {
 	.arch = MODULE_ARCH_INIT,
 };
 
-MODULE_INFO(intree, "Y");
-
 static const struct modversion_info ____versions[]
 __used
 __attribute__((section("__versions"))) = {
-	{ 0x2cc00f9, __VMLINUX_SYMBOL_STR(module_layout) },
-	{ 0xb8d030f1, __VMLINUX_SYMBOL_STR(usb_deregister) },
-	{ 0x2ebb0689, __VMLINUX_SYMBOL_STR(usb_register_driver) },
+	{ 0x66594595, __VMLINUX_SYMBOL_STR(module_layout) },
+	{ 0x1aae8b2c, __VMLINUX_SYMBOL_STR(usb_deregister) },
+	{ 0x2c3a97cd, __VMLINUX_SYMBOL_STR(usb_register_driver) },
 	{ 0x27e1a049, __VMLINUX_SYMBOL_STR(printk) },
 	{ 0xbdfb6dbb, __VMLINUX_SYMBOL_STR(__fentry__) },
 };
@@ -33,4 +31,4 @@ __attribute__((section(".modinfo"))) =
 
 MODULE_ALIAS("usb:v*p*d*dc*dsc*dp*ic03isc01ip01in*");
 
-MODULE_INFO(srcversion, "150A77326FB0FA93B8C42EC");
+MODULE_INFO(srcversion, "67D14DCA9652B69F311B615");

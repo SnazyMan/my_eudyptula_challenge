@@ -25,8 +25,8 @@ static void usb_snazy_disconnect(struct usb_interface *intf)
 }
 
 static struct usb_device_id usb_snazy_id_table[] = {
-	{USB_INTERFACE_INFO(USB_INTERFACE_CLASS_HID, /
-			    USB_INTERFACE_SUBCLASS_BOOT, /
+	{USB_INTERFACE_INFO(USB_INTERFACE_CLASS_HID, \
+			    USB_INTERFACE_SUBCLASS_BOOT, \
 			    USB_INTERFACE_PROTOCOL_KEYBOARD)},
 	{},
 };
