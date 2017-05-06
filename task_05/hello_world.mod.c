@@ -18,9 +18,7 @@ static const struct modversion_info ____versions[]
 __used
 __attribute__((section("__versions"))) = {
 	{ 0x66594595, __VMLINUX_SYMBOL_STR(module_layout) },
-	{ 0x1aae8b2c, __VMLINUX_SYMBOL_STR(usb_deregister) },
-	{ 0x2c3a97cd, __VMLINUX_SYMBOL_STR(usb_register_driver) },
-	{ 0x27e1a049, __VMLINUX_SYMBOL_STR(printk) },
+	{ 0x4e536271, __VMLINUX_SYMBOL_STR(__dynamic_pr_debug) },
 	{ 0xbdfb6dbb, __VMLINUX_SYMBOL_STR(__fentry__) },
 };
 
@@ -31,4 +29,4 @@ __attribute__((section(".modinfo"))) =
 
 MODULE_ALIAS("usb:v*p*d*dc*dsc*dp*ic03isc01ip01in*");
 
-MODULE_INFO(srcversion, "67D14DCA9652B69F311B615");
+MODULE_INFO(srcversion, "DDAF616BEAD98C2AF741252");
