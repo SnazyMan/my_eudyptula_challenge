@@ -1,0 +1,11 @@
+alias net-pf-16-proto-16-family-ovs_vport openvswitch
+alias net-pf-16-proto-16-family-ovs_datapath openvswitch
+alias vport-type-4 vport_vxlan
+alias vport-type-5 vport_geneve
+alias vport-type-3 vport_gre
+alias net-pf-40 vmw_vsock_vmci_transport
+alias vmware_vsock vmw_vsock_vmci_transport
+alias virtio:d00000013v* vmw_vsock_virtio_transport
+alias rtnl-link-hsr hsr
+alias usb:v*p*d*dc*dsc*dp*ic03isc01ip01in* hello_world
+hello_world            16384  0

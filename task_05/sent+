@@ -1,0 +1,83 @@
+From sleepingzucchini@gmail.com Sat May  6 18:16:42 2017
+Date: Sat, 6 May 2017 18:16:42 -0400
+From: SnazyMan <sleepingzucchini@gmail.com>
+To: little@eudyptula-challenge.org
+Subject: [9850aeb5fe79] Task 05 of the Eudyptula Challenge
+Message-ID: <20170506221642.GA2582@snazyman-VirtualBox>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="2fHTh5uZTiUOsy+g"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+Status: RO
+Content-Length: 1813
+Lines: 68
+
+
+--2fHTh5uZTiUOsy+g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+
+--2fHTh5uZTiUOsy+g
+Content-Type: text/x-csrc; charset=us-ascii
+Content-Disposition: attachment; filename="hello_world.c"
+
+#include <linux/kernel.h>
+#include <linux/module.h>
+#include <linux/usb.h>
+#include <linux/hid.h>
+
+/*
+ * When USB keyboard is plugged in, the module will be automatically loaded
+ * by correct USB hotplug tools
+ * depmod/kmod/udev/mdev/systemd
+ */
+
+static struct usb_device_id usb_snazy_id_table[] = {
+	{USB_INTERFACE_INFO(USB_INTERFACE_CLASS_HID, \
+			    USB_INTERFACE_SUBCLASS_BOOT, \
+			    USB_INTERFACE_PROTOCOL_KEYBOARD)},
+	{},
+};
+MODULE_DEVICE_TABLE(usb, usb_snazy_id_table);
+
+
+int init_module(void)
+{
+	pr_debug("Hello World!\n");
+	return 0;
+}
+
+void cleanup_module(void)
+{
+	pr_debug("Goodbye World\n");
+}
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Tyler Olivieri - Snazyman");
+MODULE_DESCRIPTION("Eudyptula challenge task 5");
+
+--2fHTh5uZTiUOsy+g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="proof.txt"
+
+
+tail modules.alias shows hello_world module with USB keyboard hw information
+depmod -a was run after module(hello_worl.ko) was copied to /lib/modules/uname -a/kernel to generate module.alias file with hello_world information
+
+alias net-pf-16-proto-16-family-ovs_vport openvswitch
+alias net-pf-16-proto-16-family-ovs_datapath openvswitch
+alias vport-type-4 vport_vxlan
+alias vport-type-5 vport_geneve
+alias vport-type-3 vport_gre
+alias net-pf-40 vmw_vsock_vmci_transport
+alias vmware_vsock vmw_vsock_vmci_transport
+alias virtio:d00000013v* vmw_vsock_virtio_transport
+alias rtnl-link-hsr hsr
+alias usb:v*p*d*dc*dsc*dp*ic03isc01ip01in* hello_world
+
+lsmod | grep hello  after keyboard is plugged in
+hello_world            16384  0
+
+--2fHTh5uZTiUOsy+g--
+
