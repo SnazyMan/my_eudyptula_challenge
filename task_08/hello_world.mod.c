@@ -17,13 +17,13 @@ __attribute__((section(".gnu.linkonce.this_module"))) = {
 static const struct modversion_info ____versions[]
 __used
 __attribute__((section("__versions"))) = {
-	{ 0x51d9c0a9, __VMLINUX_SYMBOL_STR(module_layout) },
+	{ 0x66594595, __VMLINUX_SYMBOL_STR(module_layout) },
 	{ 0x4302d0eb, __VMLINUX_SYMBOL_STR(free_pages) },
-	{ 0xad48eff2, __VMLINUX_SYMBOL_STR(debugfs_remove_recursive) },
+	{ 0xe51724a, __VMLINUX_SYMBOL_STR(debugfs_remove_recursive) },
 	{ 0x93fca811, __VMLINUX_SYMBOL_STR(__get_free_pages) },
-	{ 0x9d384af0, __VMLINUX_SYMBOL_STR(debugfs_create_file) },
+	{ 0x90550d3c, __VMLINUX_SYMBOL_STR(debugfs_create_file) },
 	{ 0x27e1a049, __VMLINUX_SYMBOL_STR(printk) },
-	{ 0x98fc51e0, __VMLINUX_SYMBOL_STR(debugfs_create_dir) },
+	{ 0xa4e29f0b, __VMLINUX_SYMBOL_STR(debugfs_create_dir) },
 	{ 0x1e047854, __VMLINUX_SYMBOL_STR(warn_slowpath_fmt) },
 	{ 0x4f8b5ddb, __VMLINUX_SYMBOL_STR(_copy_to_user) },
 	{ 0x7d11c268, __VMLINUX_SYMBOL_STR(jiffies) },
@@ -31,6 +31,7 @@ __attribute__((section("__versions"))) = {
 	{ 0xe2d5255a, __VMLINUX_SYMBOL_STR(strcmp) },
 	{ 0xbf63e976, __VMLINUX_SYMBOL_STR(mutex_unlock) },
 	{ 0x4f6b400b, __VMLINUX_SYMBOL_STR(_copy_from_user) },
+	{ 0x88db9f48, __VMLINUX_SYMBOL_STR(__check_object_size) },
 	{ 0x74aed678, __VMLINUX_SYMBOL_STR(mutex_lock) },
 	{ 0xbdfb6dbb, __VMLINUX_SYMBOL_STR(__fentry__) },
 };
@@ -41,4 +42,4 @@ __attribute__((section(".modinfo"))) =
 "depends=";
 
 
-MODULE_INFO(srcversion, "D37D6093FAAD5EE3B8F8B4E");
+MODULE_INFO(srcversion, "FB2F6F6D2594ADB18B95BEC");

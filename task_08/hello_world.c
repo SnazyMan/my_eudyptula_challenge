@@ -120,7 +120,7 @@ static int __init snazy_init(void)
                 return -1;
         }
 
-        id = debugfs_create_file("id", 0600, snazy_dir, 0, &snazy_misc_device_fops);
+        id = debugfs_create_file("id", 0666, snazy_dir, 0, &snazy_misc_device_fops);
         if(!id){
                 printk(KERN_ERR "debugfs_eudpytula/id: failed to create file");
                 return -1;

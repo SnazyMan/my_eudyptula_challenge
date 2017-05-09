@@ -25,6 +25,9 @@ static ssize_t snazy_misc_device_read(struct file *file, char __user  *buff,
 {
 	char content[ID_BUF_LEN] = "9850aeb5fe79";
 
+	if (count > ID_BUF_LEN)
+		return -EINVAL;
+
 	if (copy_to_user(buff, content, count))
 		return -EFAULT;
 
