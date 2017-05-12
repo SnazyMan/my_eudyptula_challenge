@@ -36,7 +36,7 @@ static ssize_t snazy_misc_device_write(struct file *file,
 
 	ret = simple_write_to_buffer(content, ID_BUF_LEN, pos, buff, count);
 	if (ret < 0)
-		return -EINVAL;
+		return ret;
 	if (strcmp(content, eudyptula_id) != 0)
 		return -EINVAL;
 	return ret;
