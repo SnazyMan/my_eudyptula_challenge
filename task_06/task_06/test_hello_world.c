@@ -25,15 +25,16 @@ int main(char * argc, char **argv)
 
         printf("Open Successfully, fd = %d\n", fd);
 
-        count = write(fd, content, BUF_LENGTH);
-        if(count == 0)
-                printf("Failed write\n");
+        //count = write(fd, content, BUF_LENGTH);	
+        //if(count == 0)
+        //        printf("Failed write\n");
 
-        printf("Write successfuly, count = %d\n", count);
+        //printf("Write successfuly, count = %d\n", count);
+
 
         count = read(fd, rx_buf, BUF_LENGTH);
         if(count == 0)
-                printf("Failed read");
+                printf("Failed read\n");
 
         printf("Read successfully, count = %d\n", count);
 
