@@ -11,20 +11,26 @@
  * Create debugfs directory called "eudyptula"
  * Create 3 virtual files in eudyptula called  "id", "jiffies", and "foo"
  * id operates just like task 06 - must be readable and writeable to any user
- * jiffies read only by any user, when read should return the current value of jiffies kernel timer
- * foo writeable to root, but readable to anyone; when written to, the value must be stored, up to one  * page of data. WHen read, which can be done by any user, the value must be returned that is stored in
- * it. Properly handle the fact that someone could be reading from the file while someone else is
+ * jiffies read only by any user, when read should return the current value
+ * of jiffies kernel timer
+ * foo writeable to root, but readable to anyone; when written to,
+ * the value must be stored, up to one	* page of data. When read,
+ * which can be done by any user, the value must be returned that is stored in
+ * it. Properly handle the fact that someone could be reading
+ * from the file while someone else is
  * writing to it (locking hint)
- * when the module is unloaded, all of the debugfs files are cleaned up, and any memory allocated is
+ * when the module is unloaded, all of the debugfs files are cleaned up,
+ * and any memory allocated is
  * freed
  */
 
 #define DRIVER_NAME "snazy_misc_device"
 #define NODE_NAME "eudyptula"
 #define ID_BUF_LEN 13
+static char *eudyptula_id = "9850aeb5fe79";
 
 //directory /sys/kernel/debug/eudyptula
-static struct dentry *snazy_dir = 0;
+static struct dentry *snazy_dir;
 
 unsigned long snazy_page_address;
 
@@ -32,124 +38,101 @@ DEFINE_MUTEX(snazy_mutex);
 
 static ssize_t snazy_misc_device_read(struct file *file, char __user  *buff, size_t count, loff_t *pos)
 {
-        char content[ID_BUF_LEN] = "9850aeb5fe79";
-
-        if(copy_to_user(buff, content, count))
-                return -EFAULT;
-
-        *pos += count;
-        return count;
+	return simple_read_from_buffer(buff, count, pos, eudyptula_id, ID_BUF_LEN);
 }
 
 static ssize_t snazy_misc_device_write(struct file *file, const char __user *buff, size_t count, loff_t *pos)
 {
+	int ret;
+	char content[ID_BUF_LEN];
 
-        char content[ID_BUF_LEN];
-        char id[ID_BUF_LEN] = "9850aeb5fe79";
-
-        if(count > ID_BUF_LEN)
-                return -EINVAL;
-
-        if(copy_from_user(content, buff, count))
-                return -EFAULT;
-
-        if(strcmp(content,id) != 0)
-                return -EINVAL;
-
-        *pos+= count;
-        return count;
+	ret = simple_write_to_buffer(content, ID_BUF_LEN, pos, buff, count);
+	if (ret < 0)
+		return ret;
+	if (strcmp(content, eudyptula_id) != 0)
+		return -EINVAL;
+	return ret;
 }
 
 static const struct file_operations snazy_misc_device_fops = {
-        .owner = THIS_MODULE,
-        .read  = snazy_misc_device_read,
-        .write = snazy_misc_device_write,
+	.owner = THIS_MODULE,
+	.read  = snazy_misc_device_read,
+	.write = snazy_misc_device_write,
 };
 
 static ssize_t snazy_jiffies_read(struct file *file, char __user  *buff, size_t count, loff_t *pos)
 {
-        unsigned long content = jiffies;
-
-        if(copy_to_user(buff, &content, count))
-                return -EFAULT;
-
-        *pos += count;
-        return count;
+	return simple_read_from_buffer(buff, count, pos, jiffies, sizeof(unsigned long));
 }
 
 static const struct file_operations snazy_jiffies_fops = {
-        .owner = THIS_MODULE,
-        .read = snazy_jiffies_read,
+	.owner = THIS_MODULE,
+	.read = snazy_jiffies_read,
 };
 
 static ssize_t snazy_foo_read(struct file *file, char __user *buff, size_t count, loff_t *pos)
 {
-        mutex_lock(&snazy_mutex);
-        if(copy_to_user(buff, snazy_page_address, count))
-                return -EFAULT;
-        mutex_unlock(&snazy_mutex);
+	mutex_lock(&snazy_mutex);
+	if (copy_to_user(buff, snazy_page_address, count))
+		return -EFAULT;
+	mutex_unlock(&snazy_mutex);
 
-        *pos += count;
-        return count;
+	*pos += count;
+	return count;
 }
 
-static ssize_t snazy_foo_write(struct file *file, const char __user *buff, size_t count, loff_t * pos)
+static ssize_t snazy_foo_write(struct file *file, const char __user *buff, size_t count, loff_t *pos)
 {
-        mutex_lock(&snazy_mutex);
-        if(copy_from_user(snazy_page_address, buff, count))
-                return -EFAULT;
-        mutex_unlock(&snazy_mutex);
+	mutex_lock(&snazy_mutex);
+	if (copy_from_user(snazy_page_address, buff, count))
+		return -EFAULT;
+	mutex_unlock(&snazy_mutex);
 
-        *pos += count;
-        return count;
+	*pos += count;
+	return count;
 }
 
 static const struct file_operations snazy_foo_fops = {
-        .owner = THIS_MODULE,
-        .read = snazy_foo_read,
-        .write = snazy_foo_write,
+	.owner = THIS_MODULE,
+	.read = snazy_foo_read,
+	.write = snazy_foo_write,
 };
 
 static int __init snazy_init(void)
 {
-        struct dentry *id, *jiffies, *foo;
+	struct dentry *id, *jiffies, *foo;
 
-        snazy_dir = debugfs_create_dir(NODE_NAME, 0);
-        if(!snazy_dir){
-                printk(KERN_ERR "debugfs_eudyptula: failed to create directory");
-                return -1;
-        }
+	snazy_dir = debugfs_create_dir(NODE_NAME, 0);
+	if (!snazy_dir)
+		goto err_out;
 
-        id = debugfs_create_file("id", 0666, snazy_dir, 0, &snazy_misc_device_fops);
-        if(!id){
-                printk(KERN_ERR "debugfs_eudpytula/id: failed to create file");
-                return -1;
-        }
+	id = debugfs_create_file("id", 0666, snazy_dir, 0, &snazy_misc_device_fops);
+	if (!id)
+		goto err_out;
 
-        jiffies = debugfs_create_file("jiffies", 0444,snazy_dir, 0, &snazy_jiffies_fops);
-        if(!jiffies){
-                printk(KERN_ERR "debugfs_eudpytula/jiffies: failed to create file");
-                return -1;
-        }
+	jiffies = debugfs_create_file("jiffies", 0444, snazy_dir, 0, &snazy_jiffies_fops);
+	if (!jiffies)
+		goto err_out;
 
-        foo = debugfs_create_file("foo", 0644, snazy_dir, 0, &snazy_foo_fops);
-        if(!foo){
-                printk(KERN_ERR "debugfs_eudpytula/jiffies: failed to create file");
-                return -1;
-        }
+	foo = debugfs_create_file("foo", 0644, snazy_dir, 0, &snazy_foo_fops);
+	if (!foo)
+		goto err_out;
 
-        //allocate page of data for foo file
-        snazy_page_address = __get_free_page(GFP_KERNEL);
-        if(!snazy_page_address)
-                return -ENOMEM;
+	snazy_page_address = __get_free_page(GFP_KERNEL);
+	if (!snazy_page_address)
+		return -ENOMEM;
 
-        return 0;
+	return 0;
+
+err_out:
+	pr_err("Failed to initialize debug_fs directory and files\n");
+	return -1;
 }
 
 static void __exit snazy_exit(void)
 {
-        debugfs_remove_recursive(snazy_dir);
-        free_page(snazy_page_address);
+	debugfs_remove_recursive(snazy_dir);
+	free_page(snazy_page_address);
 }
 
 module_init(snazy_init);
