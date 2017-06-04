@@ -60,9 +60,19 @@ static const struct file_operations snazy_misc_device_fops = {
 	.write = snazy_misc_device_write,
 };
 
+static ssize_t snazy_jiffies_read(struct file *file, char __user  *buff, size_t count, loff_t *pos)
+{
+	return simple_read_from_buffer(buff, count, pos, jiffies, sizeof(unsigned long));
+}
+
+static const struct file_operations snazy_jiffies_fops = {
+	.owner = THIS_MODULE,
+	.read = snazy_jiffies_read,
+};
+
 static int __init snazy_init(void)
 {
-	struct dentry *id;
+	struct dentry *id, *jiffies;
 
 	snazy_dir = debugfs_create_dir(NODE_NAME, 0);
 	if (!snazy_dir)
@@ -70,6 +80,10 @@ static int __init snazy_init(void)
 
 	id = debugfs_create_file("id", 0666, snazy_dir, 0, &snazy_misc_device_fops);
 	if (!id)
+		goto err_out;
+
+	jiffies = debugfs_create_file("jiffies", 0444, snazy_dir, 0, &snazy_jiffies_fops);
+	if (!jiffies)
 		goto err_out;
 
 	snazy_page_address = __get_free_page(GFP_KERNEL);
