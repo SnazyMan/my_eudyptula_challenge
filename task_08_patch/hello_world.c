@@ -60,47 +60,9 @@ static const struct file_operations snazy_misc_device_fops = {
 	.write = snazy_misc_device_write,
 };
 
-static ssize_t snazy_jiffies_read(struct file *file, char __user  *buff, size_t count, loff_t *pos)
-{
-	return simple_read_from_buffer(buff, count, pos, jiffies, sizeof(unsigned long));
-}
-
-static const struct file_operations snazy_jiffies_fops = {
-	.owner = THIS_MODULE,
-	.read = snazy_jiffies_read,
-};
-
-static ssize_t snazy_foo_read(struct file *file, char __user *buff, size_t count, loff_t *pos)
-{
-	mutex_lock(&snazy_mutex);
-	if (copy_to_user(buff, snazy_page_address, count))
-		return -EFAULT;
-	mutex_unlock(&snazy_mutex);
-
-	*pos += count;
-	return count;
-}
-
-static ssize_t snazy_foo_write(struct file *file, const char __user *buff, size_t count, loff_t *pos)
-{
-	mutex_lock(&snazy_mutex);
-	if (copy_from_user(snazy_page_address, buff, count))
-		return -EFAULT;
-	mutex_unlock(&snazy_mutex);
-
-	*pos += count;
-	return count;
-}
-
-static const struct file_operations snazy_foo_fops = {
-	.owner = THIS_MODULE,
-	.read = snazy_foo_read,
-	.write = snazy_foo_write,
-};
-
 static int __init snazy_init(void)
 {
-	struct dentry *id, *jiffies, *foo;
+	struct dentry *id;
 
 	snazy_dir = debugfs_create_dir(NODE_NAME, 0);
 	if (!snazy_dir)
@@ -108,14 +70,6 @@ static int __init snazy_init(void)
 
 	id = debugfs_create_file("id", 0666, snazy_dir, 0, &snazy_misc_device_fops);
 	if (!id)
-		goto err_out;
-
-	jiffies = debugfs_create_file("jiffies", 0444, snazy_dir, 0, &snazy_jiffies_fops);
-	if (!jiffies)
-		goto err_out;
-
-	foo = debugfs_create_file("foo", 0644, snazy_dir, 0, &snazy_foo_fops);
-	if (!foo)
 		goto err_out;
 
 	snazy_page_address = __get_free_page(GFP_KERNEL);
@@ -141,3 +95,4 @@ module_exit(snazy_exit);
 MODULE_AUTHOR("Tyler Olivieri - Snazyman");
 MODULE_DESCRIPTION("task_08 of eudyptula challenge");
 MODULE_LICENSE("GPL");
+
