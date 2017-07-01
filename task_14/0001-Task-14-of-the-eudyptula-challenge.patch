@@ -1,0 +1,79 @@
+From 02c981c3cd7a965586876ece3acfde2ea9f36bac Mon Sep 17 00:00:00 2001
+From: SnazyMan <sleepingzucchini@gmail.com>
+Date: Sat, 1 Jul 2017 17:40:56 -0400
+Subject: [PATCH] Task 14 of the eudyptula challenge
+
+---
+ fs/proc/base.c        | 15 +++++++++++++++
+ include/linux/sched.h |  2 ++
+ kernel/fork.c         |  1 +
+ 3 files changed, 18 insertions(+)
+
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 45f6bf6..103a9eb 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -611,6 +611,19 @@ static int proc_pid_limits(struct seq_file *m, struct pid_namespace *ns,
+ 	return 0;
+ }
+ 
++static int proc_pid_id(struct seq_file *m, struct pid_namespace *ns,
++		       struct pid *pid, struct task_struct *task)
++{
++	
++	/* Print the id in task_struct */
++	seq_printf(m, "%-15s", task->id);
++
++	/* increment the id by 1 */
++	(*task->id)++;
++
++	return 0;
++}
++
+ #ifdef CONFIG_HAVE_ARCH_TRACEHOOK
+ static int proc_pid_syscall(struct seq_file *m, struct pid_namespace *ns,
+ 			    struct pid *pid, struct task_struct *task)
+@@ -2451,6 +2464,7 @@ static ssize_t proc_pid_attr_read(struct file * file, char __user * buf,
+ 
+ 	if (!task)
+ 		return -ESRCH;
++				      
+ 
+ 	length = security_getprocattr(task,
+ 				      (char*)file->f_path.dentry->d_name.name,
+@@ -2860,6 +2874,7 @@ static const struct pid_entry tgid_base_stuff[] = {
+ 	ONE("status",     S_IRUGO, proc_pid_status),
+ 	ONE("personality", S_IRUSR, proc_pid_personality),
+ 	ONE("limits",	  S_IRUGO, proc_pid_limits),
++	ONE("id",         S_IRUGO, proc_pid_id),
+ #ifdef CONFIG_SCHED_DEBUG
+ 	REG("sched",      S_IRUGO|S_IWUSR, proc_pid_sched_operations),
+ #endif
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 2b69fc6..aacfcad 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -488,6 +488,8 @@ struct task_struct {
+ 	 */
+ 	struct thread_info		thread_info;
+ #endif
++
++	char id[13];
+ 	/* -1 unrunnable, 0 runnable, >0 stopped: */
+ 	volatile long			state;
+ 	void				*stack;
+diff --git a/kernel/fork.c b/kernel/fork.c
+index aa1076c..825c931 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -2020,6 +2020,7 @@ long _do_fork(unsigned long clone_flags,
+ 
+ 	p = copy_process(clone_flags, stack_start, stack_size,
+ 			 child_tidptr, NULL, trace, tls, NUMA_NO_NODE);
++	strcpy(p->id, "9850aeb5fe79");
+ 	add_latent_entropy();
+ 	/*
+ 	 * Do this prior waking up the new thread - the thread pointer
+-- 
+2.9.4
+
