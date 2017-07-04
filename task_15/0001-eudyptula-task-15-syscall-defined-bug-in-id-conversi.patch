@@ -1,0 +1,68 @@
+
+From 1a295c1d1231b7c92fbbe5f1afca9cf3ed41d6ab Mon Sep 17 00:00:00 2001
+From: SnazyMan <sleepingzucchini@gmail.com>
+Date: Mon, 3 Jul 2017 21:23:48 -0400
+Subject: [PATCH] eudyptula task 15, syscall defined, bug in id conversion
+
+---
+ arch/x86/entry/syscalls/syscall_64.tbl |  1 +
+ kernel/sys.c                           | 31 +++++++++++++++++++++++++++++++
+ 2 files changed, 32 insertions(+)
+
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index 5aef183..65fcd80 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -339,6 +339,7 @@
+ 330	common	pkey_alloc		sys_pkey_alloc
+ 331	common	pkey_free		sys_pkey_free
+ 332	common	statx			sys_statx
++333	common 	eudyptula		sys_eudyptula
+ 
+ #
+ # x32-specific system call numbers start at 512 to avoid cache impact
+diff --git a/kernel/sys.c b/kernel/sys.c
+index 8a94b4e..cd6825a 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -179,6 +179,37 @@ static int set_one_prio(struct task_struct *p, int niceval, int error)
+ 	return error;
+ }
+ 
++/* Eudyptula challenge syscall */
++SYSCALL_DEFINE2(eudyptula, uint32_t, high_id, uint32_t, low_id)
++{
++	int ret = 0;
++	uint64_t combined_id;
++	char id[13] = "9850aeb5fe79";
++	uint64_t id_converted;
++
++	printk(KERN_ERR "In sys_eduyptula\n");	
++	printk(KERN_ERR "high_id = %d\n", high_id);
++	printk(KERN_ERR "low_id = %d\n", low_id);
++	
++        /* Mush id's into a combined_id */
++	combined_id = (uint64_t) high_id << 32 | low_id;
++	printk(KERN_ERR "combined_id = %lu", combined_id);
++	
++	/* Check if combined_id equals id */
++	ret  = kstrtol(id, 16, &id_converted);
++	if (ret)
++		return ret;
++
++	printk(KERN_ERR "id_converted = %lu", id_converted);
++	
++	if (combined_id == id_converted)
++		return 0;
++	else {
++		printk(KERN_ERR "IDs did not match\n");
++		return -EINVAL;
++	}
++}
++
+ SYSCALL_DEFINE3(setpriority, int, which, int, who, int, niceval)
+ {
+ 	struct task_struct *g, *p;
+-- 
+2.9.4
+
