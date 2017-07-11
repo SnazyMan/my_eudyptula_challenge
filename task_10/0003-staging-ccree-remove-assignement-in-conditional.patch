@@ -1,0 +1,43 @@
+From b45c6eaded65c1abb45b7a4d88824f289913d7ce Mon Sep 17 00:00:00 2001
+Message-Id: <b45c6eaded65c1abb45b7a4d88824f289913d7ce.1499608047.git.sleepingzucchini@gmail.com>
+In-Reply-To: <cover.1499608047.git.sleepingzucchini@gmail.com>
+References: <cover.1499608047.git.sleepingzucchini@gmail.com>
+From: Tyler Olivieri <sleepingzucchini@gmail.com>
+Date: Sat, 8 Jul 2017 20:17:16 -0400
+Subject: [PATCH 3/5] staging: ccree: remove assignement in conditional
+
+Patch to fix following checkpatch error:
+ERROR: do not use assignment in if condition
+
+Signed-off-by: Tyler Olivieri <sleepingzucchini@gmail.com>
+---
+ drivers/staging/ccree/ssi_hash.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/ccree/ssi_hash.c b/drivers/staging/ccree/ssi_hash.c
+index 7e9f273..c66314f 100644
+--- a/drivers/staging/ccree/ssi_hash.c
++++ b/drivers/staging/ccree/ssi_hash.c
+@@ -602,7 +602,8 @@ static int ssi_hash_update(struct ahash_req_ctx *state,
+ 		return 0;
+ 	}
+ 
+-	if (unlikely(rc = ssi_buffer_mgr_map_hash_request_update(ctx->drvdata, state, src, nbytes, block_size))) {
++	rc = ssi_buffer_mgr_map_hash_request_update(ctx->drvdata, state, src, nbytes, block_size);
++	if (unlikely(rc)) {
+ 		if (rc == 1) {
+ 			SSI_LOG_DEBUG(" data size not require HW update %x\n",
+ 				     nbytes);
+@@ -1404,7 +1405,8 @@ static int ssi_mac_update(struct ahash_request *req)
+ 
+ 	state->xcbc_count++;
+ 
+-	if (unlikely(rc = ssi_buffer_mgr_map_hash_request_update(ctx->drvdata, state, req->src, req->nbytes, block_size))) {
++	rc = ssi_buffer_mgr_map_hash_request_update(ctx->drvdata, state, req->src, req->nbytes, block_size);
++	if (unlikely(rc)) {
+ 		if (rc == 1) {
+ 			SSI_LOG_DEBUG(" data size not require HW update %x\n",
+ 				     req->nbytes);
+-- 
+2.9.4
+
