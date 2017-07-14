@@ -1,0 +1,32 @@
+#include <linux/kernel.h>
+#include <linux/module.h>
+#include <linux/errno.h>
+#include <linux/miscdevice.h>
+#include <linux/uaccess.h>
+#include <linux/string.h>
+#include <linux/wait.h>
+#include <linux/init.h>
+#include <linux/kthread.h>
+
+
+#define DRIVER_NAME "snazy_misc_device"
+#define NODE_NAME "eudyptula"	if (snazy_thread -=
+	
+	return 0;
+}
+
+static void __exit snazy_exit(void)
+{
+	int ret;
+	
+	ret = kthread_stop(snazy_thread);
+	misc_deregister(&snazy_misc_device);
+}
+
+module_init(snazy_init);
+module_exit(snazy_exit);
+//module_misc_device(snazy_misc_device);
+
+MODULE_AUTHOR("Tyler Olivieri - Snazyman");
+MODULE_DESCRIPTION("task_17 of eudyptula challenge");
+MODULE_LICENSE("GPL");

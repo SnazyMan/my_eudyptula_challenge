@@ -20,7 +20,11 @@ struct task_struct *snazy_thread;
 
 int snazy_threadfn(void *data)
 {
-	wait_event_interruptible(wee_wait, condition == false);
+	while (1) {
+		wait_event_interruptible(wee_wait, condition == false);
+		if (kthread_should_stop())
+			return 0;
+	}
 }
 
 
@@ -61,7 +65,9 @@ static int __init snazy_init(void)
 	        return -1;
 
 	snazy_thread = kthread_run(snazy_threadfn, NULL, "eudyptula");
-	
+	if (snazy_thread == NULL)
+		return -1;
+
 	return 0;
 }
 
