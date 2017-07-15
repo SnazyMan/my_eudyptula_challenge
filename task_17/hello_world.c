@@ -21,7 +21,7 @@ struct task_struct *snazy_thread;
 int snazy_threadfn(void *data)
 {
 	while (1) {
-		wait_event_interruptible(wee_wait, condition == false);
+		wait_event_interruptible_timeout(wee_wait, condition == true, HZ);
 		if (kthread_should_stop())
 			return 0;
 	}
