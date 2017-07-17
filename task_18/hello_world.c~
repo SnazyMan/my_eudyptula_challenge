@@ -1,0 +1,192 @@
+#include <linux/kernel.h>
+#include <linux/module.h>
+#include <linux/errno.h>
+#include <linux/miscdevice.h>
+#include <linux/uaccess.h>
+#include <linux/string.h>
+#include <linux/wait.h>
+#include <linux/init.h>
+#include <linux/kthread.h>
+#include <linux/slab.h>
+#include <linux/list.h>
+
+#define DRIVER_NAME "snazy_misc_device"
+#define NODE_NAME "eudyptula"
+
+#define WRITE_BUF_LEN 19
+
+DECLARE_WAIT_QUEUE_HEAD(wee_wait);
+static bool condition = false;
+struct task_struct *snazy_thread;
+
+struct identity {
+	char name[20];
+	int id;
+	bool busy;
+	struct list_head list;
+};
+
+static LIST_HEAD(identity_list);
+
+int identity_create(char *name, int id)
+{
+	int ret = 0;
+	size_t length;
+	struct identity *new_identity = kmalloc(sizeof(*new_identity), GFP_KERNEL);
+	if (new_identity == NULL) {
+		pr_err("snazy module: out of memory\n");
+		return -ENOMEM;
+	}
+	
+	length = strlen(name);
+	if (length > 20) {
+		pr_err("snazy module: length > 20\n");
+		return -EINVAL;
+	}
+	
+	strcpy(new_identity->name, name);
+	new_identity->id = id;
+	
+	new_identity->busy = false;
+
+	list_add(&new_identity->list, &identity_list);
+	
+	return ret;
+}
+
+struct identity *identity_find(int id)
+{
+	struct list_head *ptr;
+	struct identity *entry;
+
+	list_for_each(ptr, &identity_list) {
+		entry = list_entry(ptr, struct identity, list);
+		if (entry->id == id)
+			return entry;
+	}
+
+	return NULL;		
+}
+
+struct identity *identity_get(void)
+{
+	int ret;
+	struct identity *next_identity;
+
+	ret = list_empty(&identity_list);
+	if (ret)
+		return NULL;
+
+	next_identity = list_first_entry(&identity_list, struct identity, list);
+	
+	list_del(&next_identity->list);
+	
+	return next_identity;
+}
+
+void identity_destroy(int id)
+{
+	struct list_head *ptr, *q;
+	struct identity *entry;
+
+	list_for_each_safe(ptr, q, &identity_list) {
+		entry = list_entry(ptr, struct identity, list);
+		if (entry->id == id) {
+			list_del(&entry->list);
+			kfree(entry);
+		}
+	}
+}
+
+int snazy_threadfn(void *data)
+{
+	struct identity *cur_identity;
+
+	while (1) {
+		wait_event_interruptible_timeout(wee_wait, condition == true, 5*HZ);
+		condition = false;
+		cur_identity = identity_get();
+		if (cur_identity != NULL) {
+			pr_info("identity_name = %s, id = %d\n", cur_identity->name, cur_identity->id);
+			kfree(cur_identity);
+		}
+		if (kthread_should_stop())
+			return 0;
+	}
+}
+
+
+static ssize_t snazy_misc_device_write(struct file *file,
+				       const char __user *buff,
+				       size_t count, loff_t *pos)
+{
+	int ret;
+	static int id_counter = 0;
+	char content[WRITE_BUF_LEN];
+
+	//content[19] = '\0';
+	
+	pr_info("content str_len = %d", strlen(content));
+	pr_info("content = %s", content);
+	
+	if (count > 19)
+		count = 19;
+	
+	ret = simple_write_to_buffer(content, WRITE_BUF_LEN, pos, buff, count);
+	if (ret < 0)
+		return ret;
+	
+	ret = identity_create(content, ++id_counter);
+	if (ret < 0)
+		return ret;
+
+	condition = true;
+	wake_up_interruptible(&wee_wait);
+	
+	return ret;
+}
+
+static const struct file_operations snazy_misc_device_fops = {
+	.owner = THIS_MODULE,
+	.write = snazy_misc_device_write,
+};
+
+static struct miscdevice snazy_misc_device = {
+	.minor = MISC_DYNAMIC_MINOR,
+	.name  = DRIVER_NAME,
+	.fops  = &snazy_misc_device_fops,
+	.nodename = NODE_NAME,
+	.mode = 0222,
+};
+
+static int __init snazy_init(void)
+{
+	int ret;
+
+	ret = misc_register(&snazy_misc_device);
+	if (ret)
+	        return -1;
+
+	snazy_thread = kthread_run(snazy_threadfn, NULL, "eudyptula");
+	if (snazy_thread == NULL)
+		return -1;
+
+	return 0;
+}
+module_init(snazy_init);
+
+static void __exit snazy_exit(void)
+{
+	int ret;
+	struct identity *cur_identity;
+
+	//clean up the whole list by using the functions given
+	
+	ret = kthread_stop(snazy_thread);
+	misc_deregister(&snazy_misc_device);
+}
+module_exit(snazy_exit);
+
+MODULE_AUTHOR("Tyler Olivieri - Snazyman");
+MODULE_DESCRIPTION("task_18 of eudyptula challenge");
+MODULE_LICENSE("GPL");

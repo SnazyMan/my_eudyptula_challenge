@@ -1,0 +1,41 @@
+#include "stdio.h"
+#include "fcntl.h"
+#include "string.h"
+#include "unistd.h"
+
+int main(void)
+{
+	int fd, ret;
+	char write_str[19];
+	char write_str2[19];
+	char write_str3[19];
+	char write_str4[19];	
+	strcpy(write_str, "Alice");
+	strcpy(write_str2, "Bob");
+	strcpy(write_str3, "Dave");
+	strcpy(write_str4, "Gena");
+	
+	fd = open("/dev/eudyptula", O_RDWR);
+	if (fd < 0)
+		printf("fd = %d\n", fd);
+	
+	ret = write(fd, write_str, 6);//strlen(write_str));
+	if (ret)
+		printf("ret = %d\n", ret);
+
+	ret = write(fd, write_str2, 4);//strlen(write_str2));
+	if (ret)
+		printf("ret = %d\n", ret);
+	
+	ret = write(fd, write_str3, 5);//strlen(write_str3));
+	if (ret)
+		printf("ret = %d\n", ret);
+	
+	ret = write(fd, write_str4, 5);//strlen(write_str4));
+	if (ret)
+		printf("ret = %d\n", ret);		
+	
+	printf("seeya\n");
+	return 0;
+}
+
