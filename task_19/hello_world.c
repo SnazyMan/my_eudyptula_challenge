@@ -5,14 +5,13 @@
 #include <linux/ip.h>
 #include <linux/tcp.h>
 
+static struct ts_config *conf;
+
 unsigned int snazy_hook(void *priv, struct sk_buff *skb, const struct nf_hook_state *state)
 {
 	int ret;
 	struct iphdr *iph;
-	const char *pattern = "9850aeb5fe79";
-	struct ts_config *conf = textsearch_prepare("kmp", pattern, strlen(pattern),
-						    GFP_KERNEL, TS_AUTOLOAD);
-	
+
 	if (skb) {
 		iph = ip_hdr(skb);
 		if (iph->protocol == IPPROTO_TCP) {
@@ -35,6 +34,10 @@ static struct nf_hook_ops snazy_nfho = {
 
 static int __init snazy_init(void)
 {
+	const char *pattern = "9850aeb5fe79";
+	conf = textsearch_prepare("kmp", pattern, strlen(pattern), GFP_KERNEL,
+				  TS_AUTOLOAD);	
+
 	nf_register_hook(&snazy_nfho);
 
 	return 0;
