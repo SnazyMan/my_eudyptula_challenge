@@ -17,7 +17,7 @@ unsigned int snazy_hook(void *priv, struct sk_buff *skb, const struct nf_hook_st
 		if (iph->protocol == IPPROTO_TCP) {
 			ret = skb_find_text(skb, 0, skb->len, conf);
 			if (ret != UINT_MAX)
-				pr_info("9850aeb5fe79\n");
+				pr_debug("9850aeb5fe79\n");
 		}
 	}
 	
