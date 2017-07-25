@@ -46,6 +46,7 @@ module_init(snazy_init);
 
 static void __exit snazy_exit(void)
 {
+	textsearch_destroy(conf);
 	nf_unregister_hook(&snazy_nfho);
 }
 module_exit(snazy_exit);
