@@ -179,12 +179,17 @@ module_init(snazy_init);
 static void __exit snazy_exit(void)
 {
 	int ret;
-	struct identity *cur_identity;
+	struct identity *entry;
+	struct list_head *ptr, *q;
 
-	//clean up the whole list by using the functions given
-	
 	ret = kthread_stop(snazy_thread);
 	misc_deregister(&snazy_misc_device);
+
+	list_for_each_safe(ptr, q, &identity_list) {
+		entry = list_entry(ptr, struct identity, list);
+		list_del(&entry->list);
+		kfree(ptr);
+	}
 }
 module_exit(snazy_exit);
 
